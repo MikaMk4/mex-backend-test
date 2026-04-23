@@ -61,13 +61,10 @@ jobs:
       - name: Install requirements
         run: make setup
 
-      # - name: Configure git
-      #   env:
-      #     SIGNING_KEY: ${{ secrets.MEX_SIGNING_KEY }}
-      #     SIGNING_PUB: ${{ vars.MEX_SIGNING_PUB }}
-      #   run: |
-      #     eval "$(ssh-agent -s)"
-      #     mex setup-commit-signing
+      - name: Configure git
+        run: |
+          git config --global user.email "${{ env.MEX_BOT_EMAIL }}"
+          git config --global user.name "${{ env.MEX_BOT_USER }}"
 
       - name: Release new version
         id: release
