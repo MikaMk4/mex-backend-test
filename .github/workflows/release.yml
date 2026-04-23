@@ -61,13 +61,13 @@ jobs:
       - name: Install requirements
         run: make setup
 
-      - name: Configure git
-        env:
-          SIGNING_KEY: ${{ secrets.MEX_SIGNING_KEY }}
-          SIGNING_PUB: ${{ vars.MEX_SIGNING_PUB }}
-        run: |
-          eval "$(ssh-agent -s)"
-          mex setup-commit-signing
+      # - name: Configure git
+      #   env:
+      #     SIGNING_KEY: ${{ secrets.MEX_SIGNING_KEY }}
+      #     SIGNING_PUB: ${{ vars.MEX_SIGNING_PUB }}
+      #   run: |
+      #     eval "$(ssh-agent -s)"
+      #     mex setup-commit-signing
 
       - name: Release new version
         id: release
@@ -112,43 +112,43 @@ jobs:
           --tag ${IMAGE}:${TAG}
           docker push --all-tags ${IMAGE}
 
-  distribute:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: release
-    permissions:
-      contents: write
+  # distribute:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   needs: release
+  #   permissions:
+  #     contents: write
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 1
-          ref: ${{ needs.release.outputs.tag }}
-          persist-credentials: false
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  #       with:
+  #         fetch-depth: 1
+  #         ref: ${{ needs.release.outputs.tag }}
+  #         persist-credentials: false
 
-      - name: Cache requirements
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        env:
-          cache-name: cache-requirements
-        with:
-          path: ~/.cache/pip
-          key: ${{ env.cache-name }}-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ env.cache-name }}-
+  #     - name: Cache requirements
+  #       uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+  #       env:
+  #         cache-name: cache-requirements
+  #       with:
+  #         path: ~/.cache/pip
+  #         key: ${{ env.cache-name }}-${{ hashFiles('requirements.txt') }}
+  #         restore-keys: |
+  #           ${{ env.cache-name }}-
 
-      - name: Setup python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: 3.14
+  #     - name: Setup python
+  #       uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+  #       with:
+  #         python-version: 3.14
 
-      - name: Install requirements
-        run: make setup
+  #     - name: Install requirements
+  #       run: make setup
 
-      - name: Build wheel and sdist distros and create a github release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          uv build --out-dir dist
-          gh release create ${{ needs.release.outputs.tag }} \
-          --generate-notes --latest --verify-tag dist/*
+  #     - name: Build wheel and sdist distros and create a github release
+  #       env:
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         uv build --out-dir dist
+  #         gh release create ${{ needs.release.outputs.tag }} \
+  #         --generate-notes --latest --verify-tag dist/*
