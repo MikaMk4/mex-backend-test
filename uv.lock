@@ -524,7 +524,7 @@ wheels = [
 
 [[package]]
 name = "mex-backend"
-version = "1.8.5"
+version = "1.8.6"
 source = { editable = "." }
 dependencies = [
     { name = "backoff" },
