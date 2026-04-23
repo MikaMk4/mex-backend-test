@@ -112,7 +112,7 @@ jobs:
           echo "digest=$(docker inspect --format='{{index .RepoDigests 0}}' ${IMAGE}:${TAG})" >> "$GITHUB_OUTPUT"
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@cad07c2c921541159356a5259cc101659085e5de # v4.1.1
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
 
       - name: Sign the images
         env:
